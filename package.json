@@ -1,0 +1,16 @@
+{
+  "name": "parser",
+  "module": "./dist/index.js",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1.1.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@lv00/toolkit": "^1.2.0",
+    "bun-plugin-dts": "^0.2.3",
+    "node-xlsx": "^0.24.0"
+  }
+}
