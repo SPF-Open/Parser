@@ -18,6 +18,5 @@ it('Should read a QO file', () => {
   const QOs = workSheet.SheetNames.map(name => {
     return { name, qo: QO.fromSHeet(workSheet.Sheets[name] as SparseSheet) };
   })
-  console.log(QOs[1].qo.length);
   fs.writeFileSync("./ex/A2-1022-129.json", JSON.stringify(QOs, null, 2));
 });

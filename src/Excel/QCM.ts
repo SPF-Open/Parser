@@ -101,7 +101,7 @@ export class QCM {
 
 export class Alternative {
   constructor(public text: string, public correct: boolean, public point: number | "auto" = "auto") {
-    this.point = point === "auto" ? (correct ? 3 : 0) : point;
+    this.point = point === "auto" ? (correct ? 3 : -1) : point;
   }
 
   get toString() {
