@@ -1,4 +1,7 @@
 import type { SparseSheet } from "xlsx";
+import { CSV } from "@lv00/toolkit";
+import { csvHeaders } from "./helper";
+import { lang, Lang } from "../langage";
 
 export interface RowSettingsQO {
   skip?: number;
@@ -13,6 +16,12 @@ export interface ColumnSettingsQCM {
 
   question?: string;
   correct?: string;
+}
+
+export interface CSVSettingsQCM {
+  language?: Lang;
+  shuffle?: boolean;
+  respectName?: boolean;
 }
 
 const defaultRowSettings = {
@@ -30,10 +39,24 @@ const defaultColumnSettings = {
   correct: 'G',
 }
 
-export class QCM {
+const defaultCSVSettings = {
+  language: Lang.FR,
+  shuffle: true,
+  respectName: false,
+}
+
+interface Txt {
+  t: string;
+  v: string;
+  r: string;
+  h: string;
+  w: string;
+}
+
+export class MCQ {
   constructor(
     public name: string,
-    public text: string,
+    public text: Txt,
     public alt: Alternative[],
     public competency = "",
     public dimension = "",
@@ -49,9 +72,9 @@ export class QCM {
     columns = { ...defaultColumnSettings, ...columns, }
     rows = { ...defaultRowSettings, ...rows, }
 
-    const questions: QCM[] = [];
+    const questions: MCQ[] = [];
     let currentRow = rows.skip;
-    let currentQuestion = new QCM('', '', [], '', '', '')
+    let currentQuestion = new MCQ('', { t: "", v: "", r: "", h: "", w: "" }, [], '', '', '')
 
     const previousDataInfo = {
       competency: undefined,
@@ -75,7 +98,7 @@ export class QCM {
             ? sheet[columns.indicator + currentRow]
             : previousDataInfo.indicator;
 
-        currentQuestion = new QCM(
+        currentQuestion = new MCQ(
           sheet[columns.name + currentRow],
           sheet[columns.question + currentRow],
           [],
@@ -97,10 +120,34 @@ export class QCM {
     }
     return questions;
   }
+
+  static toCSV(MCQ: MCQ[], options = defaultCSVSettings) {
+    options = { ...defaultCSVSettings, ...options }
+    const csv = new CSV({ header: csvHeaders });
+    MCQ.forEach((mcq, i) => {
+      i++;
+      const name = options.respectName ? mcq.name : (lang[options.language].MCQ + " " + (i < 10 ? "0" + i : i));
+      csv.addSequentially(name); // Name from the sheet or generated one
+      csv.addSequentially(mcq.text.v); // Question prompt
+      csv.addSequentially(options.shuffle ? "1" : "0"); // Shuffle
+      csv.addSequentially(lang[options.language].locale); // Language
+      csv.addSequentially("0"); // Minimum choices
+      csv.addSequentially("1"); // Maximum choices
+      mcq.alt.forEach((alt) => { csv.addSequentially(alt.text.v) }) // Alternatives
+      mcq.alt.forEach((alt) => { csv.addSequentially(alt.point.toString()) }) // Points
+      csv.addSequentially("choice_" + (mcq.alt.findIndex(alt => alt.correct) + 1)); // Correct answer
+      csv.addSequentially(mcq.competency); // Competency
+      csv.addSequentially(mcq.dimension); // Dimension
+      csv.addSequentially(mcq.indicator); // Indicator
+
+    })
+    return csv;
+  }
+
 }
 
 export class Alternative {
-  constructor(public text: string, public correct: boolean, public point: number | "auto" = "auto") {
+  constructor(public text: Txt, public correct: boolean, public point: number | "auto" = "auto") {
     this.point = point === "auto" ? (correct ? 3 : -1) : point;
   }
 

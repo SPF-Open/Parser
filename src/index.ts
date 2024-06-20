@@ -1,2 +1,2 @@
-export * from './Excel/QCM';
+export * from './Excel/MCQ';
 export * from './Excel/QO';

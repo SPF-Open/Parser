@@ -57,18 +57,22 @@ export class QO {
     };
 
     while (sheet[columns.question + currentRow]) {
+      const name = sheet[columns.name + currentRow];
+      const question = sheet[columns.question + currentRow];
       currentQuestion = new QO(
-        sheet[columns.name + currentRow],
-        sheet[columns.question + currentRow],
-        "",
+        name ? name.w : '',
+        question ? question.w : '',
         previousDataInfo.competency || '',
         previousDataInfo.dimension || '',
         previousDataInfo.indicator || '',
       );
       currentRow = currentRow + 3;
-      currentQuestion.answer = sheet[columns.answer + currentRow]
+      const answer = sheet[columns.answer + currentRow]
       currentRow = currentRow + 2;
-      if (currentQuestion.answer) questions.push(currentQuestion);
+      if (answer) {
+        currentQuestion.answer = answer.w;
+        questions.push(currentQuestion);
+      }
 
     }
     return questions;
