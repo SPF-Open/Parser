@@ -1,0 +1,45 @@
+name: Publish to NPM (Github)
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read # only required for a private repository by github/codeql-action/upload-sarif to get the Action run status
+      packages: write
+
+    steps:
+      - name: Setup bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Setup .npmrc
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build (Bun)
+        run: bun run build
+
+      - name: Build (node)
+        run: npm run build:node
+
+      - name: Build (browser)
+        run: npm run build:browser
+
+      - run: npm ci
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
