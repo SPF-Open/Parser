@@ -2,6 +2,13 @@
   "name": "parser",
   "module": "./dist/index.js",
   "type": "module",
+  "scripts": {
+    "build": "bun build.mjs && bun build src/index.ts --outfile=dist/index.js --target=bun  --minify",
+    "build:node": "bun build.mjs && bun build src/index.ts --outfile=dist/node.js --target=node  --minify",
+    "build:browser": "bun build.mjs && bun build src/index.ts --outfile=dist/browser.js --target=browser  --minify",
+    "build:all": "bun run build:node && bun run build:browser && bun run build",
+    "format": "prettier --write \"src/**/*.ts\" --single-quote --trailing-comma all --tab-width 2"
+  },
   "devDependencies": {
     "@types/bun": "^1.1.4"
   },
@@ -11,6 +18,7 @@
   "dependencies": {
     "@lv00/toolkit": "^1.2.0",
     "bun-plugin-dts": "^0.2.3",
-    "node-xlsx": "^0.24.0"
+    "node-xlsx": "^0.24.0",
+    "prettier": "^3.3.2"
   }
 }
