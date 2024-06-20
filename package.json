@@ -1,6 +1,6 @@
 {
   "version": "0.0.1",
-  "name": "@SPF-Open/parser",
+  "name": "@spf-open/parser",
   "module": "./dist/index.js",
   "type": "module",
   "scripts": {
