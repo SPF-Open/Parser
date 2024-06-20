@@ -34,5 +34,5 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/browser.js"
     }
-  },
+  }
 }
