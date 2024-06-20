@@ -39,7 +39,7 @@ jobs:
       - name: Build (browser)
         run: npm run build:browser
 
-      - run: echo "registry=https://npm.pkg.github.com/" >> .npmrc
+      - run: echo "registry=https://npm.pkg.github.com/@SPF-Open" >> .npmrc
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
