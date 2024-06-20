@@ -20,5 +20,19 @@
     "bun-plugin-dts": "^0.2.3",
     "node-xlsx": "^0.24.0",
     "prettier": "^3.3.2"
-  }
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./nodejs": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/node.js"
+    },
+    "./web": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/browser.js"
+    }
+  },
 }

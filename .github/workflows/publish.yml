@@ -39,7 +39,6 @@ jobs:
       - name: Build (browser)
         run: npm run build:browser
 
-      - run: npm ci
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
