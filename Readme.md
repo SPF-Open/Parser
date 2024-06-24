@@ -2,7 +2,7 @@
 
 ## 📦 Description
 
-Parser used in the varionus web projects (Svelte) of the SPF-Open organization. (SPF-Finances -> P&O -> Testing team)
+Parser used in the various web projects (Svelte) of the SPF-Open organization. (SPF-Finances -> P&O -> Testing team)
 
 It supports the following parsing and transformation:
 | From |extension| To | Implementation |
