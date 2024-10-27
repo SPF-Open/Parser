@@ -1,22 +1,13 @@
 import type { SparseSheet } from 'xlsx';
 import { CSV } from '@lv00/toolkit';
-import { csvHeaders } from './helper';
+import {
+  ColumnSettings,
+  csvHeaders,
+  PreviousDataInfo,
+  RowSettings,
+  Txt,
+} from './helper';
 import { lang, Lang } from '../langage';
-
-export interface RowSettingsQO {
-  skip?: number;
-  alternative?: number;
-}
-
-export interface ColumnSettingsQCM {
-  competency?: string;
-  dimension?: string;
-  indicator?: string;
-  name?: string;
-
-  question?: string;
-  correct?: string;
-}
 
 export interface CSVSettingsQCM {
   language?: Lang;
@@ -27,7 +18,7 @@ export interface CSVSettingsQCM {
 const defaultRowSettings = {
   skip: 7,
   alternative: 4,
-};
+} satisfies RowSettings;
 
 const defaultColumnSettings = {
   competency: 'A',
@@ -37,7 +28,7 @@ const defaultColumnSettings = {
 
   question: 'F',
   correct: 'G',
-};
+} satisfies ColumnSettings;
 
 const defaultCSVSettings = {
   language: Lang.FR,
@@ -45,22 +36,14 @@ const defaultCSVSettings = {
   respectName: false,
 };
 
-interface Txt {
-  t: string;
-  v: string;
-  r: string;
-  h: string;
-  w: string;
-}
-
 export class MCQ {
   constructor(
-    public name: string,
+    public name: Txt,
     public text: Txt,
     public alt: Alternative[],
-    public competency = '',
-    public dimension = '',
-    public indicator = '',
+    public competency: Txt,
+    public dimension: Txt,
+    public indicator: Txt,
   ) {}
 
   public addAlt(alt: Alternative) {
@@ -79,38 +62,38 @@ export class MCQ {
     const questions: MCQ[] = [];
     let currentRow = rows.skip;
     let currentQuestion = new MCQ(
-      '',
-      { t: '', v: '', r: '', h: '', w: '' },
+      new Txt(),
+      new Txt(),
       [],
-      '',
-      '',
-      '',
+      new Txt(),
+      new Txt(),
+      new Txt(),
     );
 
     const previousDataInfo = {
-      competency: undefined,
-      dimension: undefined,
-      indicator: undefined,
-    };
+      competency: new Txt(),
+      dimension: new Txt(),
+      indicator: new Txt(),
+    } as PreviousDataInfo;
 
     while (sheet[columns.question + currentRow]) {
       if ((currentRow - rows.skip) % 5 == 0 || currentRow == rows.skip) {
         if (columns.competency)
-          previousDataInfo.competency = sheet[columns.competency + currentRow]
-            ? sheet[columns.competency + currentRow]
-            : previousDataInfo.competency;
+          previousDataInfo.competency = Txt.fromObject(
+            sheet[columns.competency + currentRow],
+          );
         if (columns.dimension)
-          previousDataInfo.dimension = sheet[columns.dimension + currentRow]
-            ? sheet[columns.dimension + currentRow]
-            : previousDataInfo.dimension;
+          previousDataInfo.dimension = Txt.fromObject(
+            sheet[columns.dimension + currentRow],
+          );
         if (columns.indicator)
-          previousDataInfo.indicator = sheet[columns.indicator + currentRow]
-            ? sheet[columns.indicator + currentRow]
-            : previousDataInfo.indicator;
+          previousDataInfo.indicator = Txt.fromObject(
+            sheet[columns.indicator + currentRow],
+          );
 
         currentQuestion = new MCQ(
-          sheet[columns.name + currentRow],
-          sheet[columns.question + currentRow],
+          Txt.fromObject(sheet[columns.name + currentRow]),
+          Txt.fromObject(sheet[columns.question + currentRow]),
           [],
           previousDataInfo.competency,
           previousDataInfo.dimension,
@@ -119,7 +102,7 @@ export class MCQ {
         questions.push(currentQuestion);
       } else {
         const alt = new Alternative(
-          sheet[columns.question + currentRow],
+          Txt.fromObject(sheet[columns.question + currentRow]),
           sheet[columns.correct + currentRow] &&
             sheet[columns.correct + currentRow].h &&
             sheet[columns.correct + currentRow].h.toLowerCase().trim() === 'x',
@@ -137,16 +120,16 @@ export class MCQ {
     MCQ.forEach((mcq, i) => {
       i++;
       const name = options.respectName
-        ? mcq.name
+        ? mcq.name.toString()
         : lang[options.language].MCQ + ' ' + (i < 10 ? '0' + i : i);
       csv.addSequentially(name); // Name from the sheet or generated one
-      csv.addSequentially(mcq.text.v); // Question prompt
+      csv.addSequentially(mcq.text.toString()); // Question prompt
       csv.addSequentially(options.shuffle ? '1' : '0'); // Shuffle
       csv.addSequentially(lang[options.language].locale); // Language
       csv.addSequentially('0'); // Minimum choices
       csv.addSequentially('1'); // Maximum choices
       mcq.alt.forEach((alt) => {
-        csv.addSequentially(alt.text.v);
+        csv.addSequentially(alt.text.toString());
       }); // Alternatives
       mcq.alt.forEach((alt) => {
         csv.addSequentially(alt.point.toString());
@@ -154,9 +137,9 @@ export class MCQ {
       csv.addSequentially(
         'choice_' + (mcq.alt.findIndex((alt) => alt.correct) + 1),
       ); // Correct answer
-      csv.addSequentially(mcq.competency); // Competency
-      csv.addSequentially(mcq.dimension); // Dimension
-      csv.addSequentially(mcq.indicator); // Indicator
+      csv.addSequentially(mcq.competency.toString()); // Competency
+      csv.addSequentially(mcq.dimension.toString()); // Dimension
+      csv.addSequentially(mcq.indicator.toString()); // Indicator
     });
     return csv;
   }
@@ -169,10 +152,6 @@ export class Alternative {
     public point: number | 'auto' = 'auto',
   ) {
     this.point = point === 'auto' ? (correct ? 3 : -1) : point;
-  }
-
-  get toString() {
-    return this.text;
   }
 
   get isCorrect() {

@@ -19,7 +19,15 @@ it('Should read a QCM file and get a CSV', () => {
     return { name, qcm: MCQ.fromSHeet(workSheet.Sheets[name] as SparseSheet) };
   });
   const csv = MCQ.toCSV(QCMs[1].qcm);
-  fs.writeFileSync('./ex/A2-1022-097.csv', csv.toString());
+
+  const rules = [
+    {
+      from: '\n',
+      to: ' ',
+    },
+  ];
+
+  fs.writeFileSync('./ex/A2-1022-097.csv', csv.toStringEncoded(';', rules));
 });
 
 it('Should read a QO file', () => {

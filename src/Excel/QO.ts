@@ -1,24 +1,16 @@
 import type { SparseSheet } from 'xlsx';
+import { ColumnSettings, RowSettings, Txt } from './helper';
 
-export interface RowSettings {
-  skip?: number;
-  alternative?: number;
-}
-
-export interface ColumnSettings {
-  competency?: string;
-  dimension?: string;
-  indicator?: string;
-  name?: string;
-
-  question?: string;
-  correct?: string;
+export interface ColumnSettingsOQ extends ColumnSettings {
+  answer: 'C';
+  pointPerElement: 'E';
+  totalPoint: 'G';
 }
 
 const defaultRowSettings = {
   skip: 6,
   alternative: 5,
-};
+} satisfies RowSettings;
 
 const defaultColumnSettings = {
   competency: 'A',
@@ -30,13 +22,13 @@ const defaultColumnSettings = {
   answer: 'C',
   pointPerElement: 'E',
   totalPoint: 'G',
-};
+} satisfies ColumnSettingsOQ;
 
 export class QO {
   constructor(
     public name: string,
-    public text: string,
-    public answer: string,
+    public text: Txt,
+    public answer: Txt,
     public competency = '',
     public dimension = '',
     public indicator = '',
@@ -53,7 +45,7 @@ export class QO {
 
     const questions: QO[] = [];
     let currentRow = rows.skip;
-    let currentQuestion = new QO('', '', '', '', '', '');
+    let currentQuestion = new QO('', new Txt(), new Txt(), '', '', '');
 
     const previousDataInfo = {
       competency: undefined,
@@ -66,7 +58,8 @@ export class QO {
       const question = sheet[columns.question + currentRow];
       currentQuestion = new QO(
         name ? name.w : '',
-        question ? question.w : '',
+        question ? question : '',
+        new Txt(),
         previousDataInfo.competency || '',
         previousDataInfo.dimension || '',
         previousDataInfo.indicator || '',
@@ -75,7 +68,7 @@ export class QO {
       const answer = sheet[columns.answer + currentRow];
       currentRow = currentRow + 2;
       if (answer) {
-        currentQuestion.answer = answer.w;
+        currentQuestion.answer = answer;
         questions.push(currentQuestion);
       }
     }

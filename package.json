@@ -1,5 +1,5 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.3",
   "name": "@spf-open/parser",
   "module": "./dist/index.js",
   "type": "module",
@@ -11,16 +11,16 @@
     "format": "prettier --write \"src/**/*.ts\" --single-quote --trailing-comma all --tab-width 2"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.4"
+    "@types/bun": "^1.1.12",
+    "bun-plugin-dts": "^0.3.0",
+    "prettier": "^3.3.3"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@lv00/toolkit": "^1.2.0",
-    "bun-plugin-dts": "^0.2.3",
-    "node-xlsx": "^0.24.0",
-    "prettier": "^3.3.2"
+    "@lv00/toolkit": "^1.2.5",
+    "node-xlsx": "^0.24.0"
   },
   "exports": {
     ".": {
