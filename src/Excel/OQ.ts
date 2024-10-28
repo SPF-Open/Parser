@@ -24,7 +24,7 @@ const defaultColumnSettings = {
   totalPoint: 'G',
 } satisfies ColumnSettingsOQ;
 
-export class QO {
+export class OQ {
   constructor(
     public name: string,
     public text: Txt,
@@ -43,9 +43,9 @@ export class QO {
     columns = { ...defaultColumnSettings, ...columns };
     rows = { ...defaultRowSettings, ...rows };
 
-    const questions: QO[] = [];
+    const questions: OQ[] = [];
     let currentRow = rows.skip;
-    let currentQuestion = new QO('', new Txt(), new Txt(), '', '', '');
+    let currentQuestion = new OQ('', new Txt(), new Txt(), '', '', '');
 
     const previousDataInfo = {
       competency: undefined,
@@ -56,7 +56,7 @@ export class QO {
     while (sheet[columns.question + currentRow]) {
       const name = sheet[columns.name + currentRow];
       const question = sheet[columns.question + currentRow];
-      currentQuestion = new QO(
+      currentQuestion = new OQ(
         name ? name.w : '',
         question ? question : '',
         new Txt(),

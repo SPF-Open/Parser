@@ -1,6 +1,6 @@
 import { it } from 'bun:test';
 import xlsx, { type SparseSheet } from 'xlsx';
-import { MCQ, QO } from '../index';
+import { MCQ, OQ } from '../index';
 import fs from 'fs';
 
 it('Should read a QCM file', () => {
@@ -34,7 +34,7 @@ it('Should read a QO file', () => {
   const buffer = fs.readFileSync('./ex/A2-1022-129_QO.xlsx');
   const workSheet = xlsx.read(buffer);
   const QOs = workSheet.SheetNames.map((name) => {
-    return { name, qo: QO.fromSHeet(workSheet.Sheets[name] as SparseSheet) };
+    return { name, qo: OQ.fromSHeet(workSheet.Sheets[name] as SparseSheet) };
   });
   fs.writeFileSync('./ex/A2-1022-129.json', JSON.stringify(QOs, null, 2));
 });
