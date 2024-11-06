@@ -49,7 +49,6 @@ describe('XmlElement', () => {
       </root>
     `;
     const element = XmlElement.parse(xmlString);
-    console.log(element.json());
     expect(JSON.parse(element.json())).toEqual({
       tag: 'root',
       content: '',
