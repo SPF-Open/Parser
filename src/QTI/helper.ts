@@ -1,11 +1,11 @@
 export class XmlElement {
   constructor(
-    public tag = "",
-    public content = "",
+    public tag = '',
+    public content = '',
     public attributes: { [key: string]: string } = {},
     public children: XmlElement[] = [],
-    public parent: XmlElement | null = null
-  ) { }
+    public parent: XmlElement | null = null,
+  ) {}
 
   // Parses an XML string and converts it to XmlElement instances
   static parse(xmlString: string): XmlElement {
@@ -13,11 +13,21 @@ export class XmlElement {
     let xmlDoc;
 
     parser = new DOMParser();
-    xmlDoc = parser.parseFromString(xmlString, "text/xml");
+    xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
-    function parseNode(node: Node, parent: XmlElement | null = null): XmlElement {
-      if (node.nodeType === 3) { // Node.TEXT_NODE
-        return new XmlElement("", (node.nodeValue || "").trim(), {}, [], parent);
+    function parseNode(
+      node: Node,
+      parent: XmlElement | null = null,
+    ): XmlElement {
+      if (node.nodeType === 3) {
+        // Node.TEXT_NODE
+        return new XmlElement(
+          '',
+          (node.nodeValue || '').trim(),
+          {},
+          [],
+          parent,
+        );
       }
 
       const elementNode = node as Element;
@@ -29,10 +39,19 @@ export class XmlElement {
         }
       }
 
-      const element = new XmlElement(elementNode.tagName, "", attributes, [], parent);
-      Array.from(node.childNodes).forEach(child => {
+      const element = new XmlElement(
+        elementNode.tagName,
+        '',
+        attributes,
+        [],
+        parent,
+      );
+      Array.from(node.childNodes).forEach((child) => {
         const parsedChild = parseNode(child, element);
-        if (parsedChild && (parsedChild.content || parsedChild.children.length > 0)) {
+        if (
+          parsedChild &&
+          (parsedChild.content || parsedChild.children.length > 0)
+        ) {
           element.children.push(parsedChild);
         }
       });
@@ -45,26 +64,31 @@ export class XmlElement {
 
   // Converts the XmlElement instance back to an XML string
   toXml(breakLine = false, indent = 0): string {
-    function nodeToXml(element: XmlElement, breakLine: boolean, indentLevel: number): string {
-      if (!element.tag) return " ".repeat(indentLevel) + element.content;
+    function nodeToXml(
+      element: XmlElement,
+      breakLine: boolean,
+      indentLevel: number,
+    ): string {
+      if (!element.tag) return ' '.repeat(indentLevel) + element.content;
 
-      const indentString = " ".repeat(indentLevel); // Indentation for current level
+      const indentString = ' '.repeat(indentLevel); // Indentation for current level
       const attributesString = Object.entries(element.attributes)
         .map(([key, value]) => ` ${key}="${value}"`)
-        .join("");
+        .join('');
 
       const openTag = `<${element.tag}${attributesString}>`;
       const closeTag = `</${element.tag}>`;
 
       // Recursively process children, increasing indentation for child elements
       const childrenXml = element.children
-        .map(child => nodeToXml(child, breakLine, indentLevel + indent))  // Increase indent for children
-        .join(breakLine ? "\n" : "");
+        .map((child) => nodeToXml(child, breakLine, indentLevel + indent)) // Increase indent for children
+        .join(breakLine ? '\n' : '');
 
       // Format the output with optional indentation and line breaks
-      const formattedXml = `${indentString}${openTag}${breakLine ? "\n" : ""}` +
+      const formattedXml =
+        `${indentString}${openTag}${breakLine ? '\n' : ''}` +
         `${childrenXml}` +
-        (breakLine ? `\n${indentString}` : "") +
+        (breakLine ? `\n${indentString}` : '') +
         closeTag;
 
       return formattedXml;
@@ -73,13 +97,14 @@ export class XmlElement {
     return nodeToXml(this, breakLine, 0).trim();
   }
 
-
-
-
   json(space: number = 2): any {
-    return JSON.stringify(this, (key, value) => {
-      if (key === "parent") return undefined;
-      return value;
-    }, space);
+    return JSON.stringify(
+      this,
+      (key, value) => {
+        if (key === 'parent') return undefined;
+        return value;
+      },
+      space,
+    );
   }
 }
