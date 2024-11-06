@@ -1,4 +1,4 @@
-export class XmlElement {
+export default class XmlElement {
   constructor(
     public tag = '',
     public content = '',
@@ -19,8 +19,8 @@ export class XmlElement {
       node: Node,
       parent: XmlElement | null = null,
     ): XmlElement {
+        // Node.TEXT_NODE === 3
       if (node.nodeType === 3) {
-        // Node.TEXT_NODE
         return new XmlElement(
           '',
           (node.nodeValue || '').trim(),
