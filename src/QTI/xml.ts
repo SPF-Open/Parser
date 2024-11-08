@@ -2,7 +2,7 @@ export default class XmlElement {
   constructor(
     public tag = '',
     public content = '',
-    public attributes: { [key: string]: string } = {},
+    public attributes: Map<string, string> = new Map(),
     public children: XmlElement[] = [],
     public parent: XmlElement | null = null,
   ) {}
@@ -19,23 +19,23 @@ export default class XmlElement {
       node: Node,
       parent: XmlElement | null = null,
     ): XmlElement {
-        // Node.TEXT_NODE === 3
+      // TEXT_NODE === 3
       if (node.nodeType === 3) {
         return new XmlElement(
           '',
           (node.nodeValue || '').trim(),
-          {},
+          new Map(),
           [],
           parent,
         );
       }
 
       const elementNode = node as Element;
-      const attributes: { [key: string]: string } = {};
+      const attributes = new Map();
 
       if (elementNode.attributes) {
         for (const attr of Array.from(elementNode.attributes)) {
-          attributes[attr.name] = attr.value;
+          attributes.set(attr.name, attr.value);
         }
       }
 
@@ -50,7 +50,9 @@ export default class XmlElement {
         const parsedChild = parseNode(child, element);
         if (
           parsedChild &&
-          (parsedChild.content || parsedChild.children.length > 0)
+          (parsedChild.content ||
+            parsedChild.children.length > 0 ||
+            parsedChild.tag)
         ) {
           element.children.push(parsedChild);
         }
@@ -72,9 +74,15 @@ export default class XmlElement {
       if (!element.tag) return ' '.repeat(indentLevel) + element.content;
 
       const indentString = ' '.repeat(indentLevel); // Indentation for current level
-      const attributesString = Object.entries(element.attributes)
+      const attributesString = element.attributes
+        .entries()
         .map(([key, value]) => ` ${key}="${value}"`)
+        .toArray()
         .join('');
+
+      if (element.children.length === 0 && !element.content) {
+        return `${indentString}<${element.tag}${attributesString} />`;
+      }
 
       const openTag = `<${element.tag}${attributesString}>`;
       const closeTag = `</${element.tag}>`;
@@ -102,9 +110,22 @@ export default class XmlElement {
       this,
       (key, value) => {
         if (key === 'parent') return undefined;
+        if (value instanceof Map) return Object.fromEntries(value);
         return value;
       },
       space,
     );
+  }
+
+  findAll(tag: string): XmlElement[] {
+    const elements: XmlElement[] = [];
+    function findInElement(element: XmlElement) {
+      if (element.tag === tag) {
+        elements.push(element);
+      }
+      element.children.forEach(findInElement);
+    }
+    findInElement(this);
+    return elements;
   }
 }

@@ -1,4 +1,4 @@
-import { XmlElement } from './helper';
+import XmlElement from './xml';
 import { describe, it, expect } from 'bun:test';
 
 // To run this code, on the server side, you need to install xmldom package
@@ -20,7 +20,7 @@ describe('XmlElement', () => {
     expect(element.tag).toBe('root');
     expect(element.children.length).toBe(2);
     expect(element.children[0].tag).toBe('child1');
-    expect(element.children[0].attributes.attr1).toBe('value1');
+    expect(element.children[0].attributes.get('attr1')).toBe('value1');
     expect(element.children[0].children[0].content).toBe('content1');
     expect(element.children[1].tag).toBe('child2');
     expect(element.children[1].children[0].content).toBe('content2');
