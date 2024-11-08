@@ -11,7 +11,7 @@
     "format": "prettier --write \"src/**/*.ts\" --single-quote --trailing-comma all --tab-width 2"
   },
   "devDependencies": {
-    "@types/bun": "^1.1.12",
+    "@types/bun": "^1.1.13",
     "bun-plugin-dts": "^0.3.0",
     "prettier": "^3.3.3",
     "xmldom": "^0.6.0",
@@ -21,7 +21,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@lv00/toolkit": "^1.2.5",
+    "@lv00/toolkit": "^1.2.9",
     "node-xlsx": "^0.24.0"
   },
   "exports": {
