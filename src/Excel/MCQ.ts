@@ -41,9 +41,9 @@ export class MCQ {
     public name: Txt,
     public text: Txt,
     public alt: Alternative[],
-    public competency: Txt,
-    public dimension: Txt,
-    public indicator: Txt,
+    public competency: Txt = new Txt(),
+    public dimension: Txt = new Txt(),
+    public indicator: Txt = new Txt(),
   ) {}
 
   public addAlt(alt: Alternative) {

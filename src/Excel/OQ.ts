@@ -29,9 +29,9 @@ export class OQ {
     public name: string,
     public text: Txt,
     public answer: Txt,
-    public competency = '',
-    public dimension = '',
-    public indicator = '',
+    public competency = new Txt(),
+    public dimension = new Txt(),
+    public indicator = new Txt(),
   ) {}
 
   static fromSHeet(
@@ -45,12 +45,12 @@ export class OQ {
 
     const questions: OQ[] = [];
     let currentRow = rows.skip;
-    let currentQuestion = new OQ('', new Txt(), new Txt(), '', '', '');
+    let currentQuestion = new OQ('', new Txt(), new Txt());
 
     const previousDataInfo = {
-      competency: undefined,
-      dimension: undefined,
-      indicator: undefined,
+      competency: new Txt(),
+      dimension: new Txt(),
+      indicator: new Txt(),
     };
 
     while (sheet[columns.question + currentRow]) {
@@ -60,9 +60,9 @@ export class OQ {
         name ? name.w : '',
         question ? question : '',
         new Txt(),
-        previousDataInfo.competency || '',
-        previousDataInfo.dimension || '',
-        previousDataInfo.indicator || '',
+        previousDataInfo.competency,
+        previousDataInfo.dimension,
+        previousDataInfo.indicator,
       );
       currentRow = currentRow + 3;
       const answer = sheet[columns.answer + currentRow];
