@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@lv00/toolkit": "^1.2.9",
+    "jszip": "^3.10.1",
     "node-xlsx": "^0.24.0"
   },
   "exports": {
