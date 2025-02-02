@@ -1,6 +1,6 @@
 {
   "version": "0.0.5",
-  "name": "@spf-open/parser",
+  "name": "@lv00/tao-parser",
   "module": "./dist/index.js",
   "type": "module",
   "scripts": {
